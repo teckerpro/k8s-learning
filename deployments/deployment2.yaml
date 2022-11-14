@@ -1,0 +1,27 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: super-app
+  strategy:
+    rollingUpdate:
+      maxSurge: 5
+      maxUnavailable: 3
+    type: RollingUpdate
+  revisionHistoryLimit: 1 # Хранение истории replicasets (пол умолчанию хранится 10)
+  template:
+    metadata:
+      labels:
+        app: super-app
+    spec:
+      containers:
+      - image: nginx:1.13
+        name: nginx
+        ports:
+        - containerPort: 80
+...
