@@ -10,8 +10,8 @@ spec:
       app: super-app
   strategy:
     rollingUpdate:
-      maxSurge: 5
-      maxUnavailable: 3
+      maxSurge: 2
+      maxUnavailable: 1
     type: RollingUpdate
   revisionHistoryLimit: 1 # Хранение истории replicasets (пол умолчанию хранится 10)
   template:
