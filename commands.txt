@@ -1,0 +1,1 @@
+kubectl port-forward pods/deployment-name-7f89c4755d-frsxc 8080:80
