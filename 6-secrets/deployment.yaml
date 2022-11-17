@@ -1,0 +1,63 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: super-app
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: super-app
+    spec:
+      containers:
+      - image: openresty/openresty:1.13.6.2-alpine
+        name: openresty # имя контейнера внутри пода
+        ports:
+        - containerPort: 80
+        env:
+        - name: USERNAMEDD
+          valueFrom:
+            secretKeyRef:
+              name: user
+              key: username
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 80
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 80
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+          initialDelaySeconds: 10
+        resources:
+          requests:
+            cpu: 50m # 1000m = 1 CPU
+            memory: 100Mi
+          limits:
+            cpu: 100m
+            memory: 500Mi
+        volumeMounts:
+        - name: volume-openresty
+          mountPath: /usr/local/openresty/nginx/conf/
+      volumes:
+      - name: volume-openresty
+        configMap:
+          name: config-openresty
+...
